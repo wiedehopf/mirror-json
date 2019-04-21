@@ -1,0 +1,17 @@
+
+[Unit]
+Description=mirror-json
+Documentation=https://github.com/wiedehopf/mirror-json
+Wants=network.target
+After=network.target
+
+[Service]
+ExecStart=-/usr/local/bin/mirror-json.sh
+User=pi
+Type=simple
+Restart=always
+RestartSec=30
+Nice=-5
+
+[Install]
+WantedBy=default.target
