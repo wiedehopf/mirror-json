@@ -14,7 +14,7 @@ INTERVAL=10
 
 USER=pi
 TARGET=localhost
-sshopts="-o ControlPath=~/.ssh/cm-%r@%h:%p -o ControlMaster=auto -o ControlPersist=10m"
+sshopts="-o ControlPath=~/.ssh/cm-%r@%h:%p -o ControlMaster=auto -o ControlPersist=10m -o ConnectTimeout=10 -o ServerAliveInterval=5 -v"
 
 ssh="ssh $sshopts $USER@$TARGET"
 
