@@ -1,0 +1,8 @@
+SRC=/run/dump1090-fa
+DEST=/run/mirror-json
+
+INTERVAL=12
+HISTORY=100
+
+USER=pi
+TARGET=localhost
