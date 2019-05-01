@@ -9,7 +9,7 @@ trap "kill -2 0" SIGTERM
 
 sshopts="-o ControlPath=~/.ssh/cm-%r@%h:%p -o ControlMaster=auto -o ControlPersist=10m -o ConnectTimeout=5 -o ServerAliveInterval=3"
 
-ssh="ssh $sshopts $USER@$TARGET"
+ssh="timeout -s9 8 ssh $sshopts $USER@$TARGET"
 
 while true
 do
@@ -22,10 +22,7 @@ do
 		pid=$!
 		bzip2 -c $SRC/aircraft.json | $ssh "bunzip2 | tee $DEST/history_$((i%$HISTORY)).json > $DEST/tmp.json && [ -f $DEST/receiver.json ] && mv $DEST/tmp.json $DEST/aircraft.json"
 	do
-		if ps $pid | grep "sleep $INTERVAL" -c >/dev/null
-		then
-			wait $pid
-		fi
+		wait $pid
 		i=$((i+1))
 	done
 done &
@@ -38,10 +35,7 @@ do
 	then
 		(bzip2 -c $SRC/stats.json | $ssh "bunzip2 > $DEST/stats-tmp.json && mv $DEST/stats-tmp.json $DEST/stats.json")
 	fi
-	if ps $pid | grep "sleep 57" -c >/dev/null
-	then
-		wait $pid
-	fi
+	wait $pid
 done &
 
 while true
