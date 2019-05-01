@@ -22,10 +22,12 @@ do
 		pid=$!
 		bzip2 -c $SRC/aircraft.json | $ssh "bunzip2 | tee $DEST/history_$((i%$HISTORY)).json > $DEST/tmp.json && [ -f $DEST/receiver.json ] && mv $DEST/tmp.json $DEST/aircraft.json"
 	do
-		wait $pid
+		if ps $pid | grep "sleep $INTERVAL" -c >/dev/null
+		then
+			wait $pid
+		fi
 		i=$((i+1))
 	done
-	sleep 5
 done &
 
 while sleep 3
@@ -34,11 +36,12 @@ do
 	pid=$!
 	if ! (bzip2 -c $SRC/stats.json | $ssh "bunzip2 > $DEST/stats-tmp.json && mv $DEST/stats-tmp.json $DEST/stats.json")
 	then
-		echo "Trying to transfer the stats a second time"
-		sleep 10
 		(bzip2 -c $SRC/stats.json | $ssh "bunzip2 > $DEST/stats-tmp.json && mv $DEST/stats-tmp.json $DEST/stats.json")
 	fi
-	wait $pid
+	if ps $pid | grep "sleep 57" -c >/dev/null
+	then
+		wait $pid
+	fi
 done &
 
 while true
