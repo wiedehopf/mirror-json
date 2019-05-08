@@ -20,10 +20,9 @@ do
 	i=0
 	while
 		sleep $INTERVAL &
-		pid=$!
 		$bzip2 -c $SRC/aircraft.json | $ssh "bunzip2 | tee $DEST/history_$((i%$HISTORY)).json > $DEST/tmp.json && [ -f $DEST/receiver.json ] && mv $DEST/tmp.json $DEST/aircraft.json"
 	do
-		wait $pid
+		wait
 		i=$((i+1))
 	done
 done &
@@ -31,12 +30,11 @@ done &
 while sleep 3
 do
 	sleep 57 &
-	pid=$!
 	if ! ($bzip2 -c $SRC/stats.json | $ssh "bunzip2 > $DEST/stats-tmp.json && mv $DEST/stats-tmp.json $DEST/stats.json")
 	then
 		($bzip2 -c $SRC/stats.json | $ssh "bunzip2 > $DEST/stats-tmp.json && mv $DEST/stats-tmp.json $DEST/stats.json")
 	fi
-	wait $pid
+	wait
 done &
 
 while true
