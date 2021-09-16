@@ -33,7 +33,14 @@ do
 	if ! ($bzip2 -c $SRC/stats.json | $ssh "bunzip2 > $DEST/stats-tmp.json && mv $DEST/stats-tmp.json $DEST/stats.json")
 	then
 		($bzip2 -c $SRC/stats.json | $ssh "bunzip2 > $DEST/stats-tmp.json && mv $DEST/stats-tmp.json $DEST/stats.json")
-	fi
+    fi
+    if [[ -f /run/airspy_adsb/stats.json ]]; then
+        $ssh "sudo mkdir -p /run/airspy_adsb; sudo chown $USER /run/airspy_adsb"
+        if ! ($bzip2 -c /run/airspy_adsb/stats.json | $ssh "bunzip2 > /run/airspy_adsb/stats-tmp.json && mv /run/airspy_adsb/stats-tmp.json /run/airspy_adsb/stats.json")
+        then
+            ($bzip2 -c /run/airspy_adsb/stats.json | $ssh "bunzip2 > /run/airspy_adsb/stats-tmp.json && mv /run/airspy_adsb/stats-tmp.json /run/airspy_adsb/stats.json")
+        fi
+    fi
 	wait
 done &
 
