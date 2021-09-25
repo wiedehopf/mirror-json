@@ -15,7 +15,11 @@ bzip2='timeout -s9 8 bzip2'
 while true
 do
 	$ssh "sudo mkdir -p $DEST; sudo chown $USER $DEST"
-	timeout -s9 8 cat $SRC/receiver.json | sed "s/refresh\" : [0-9]*/refresh\" : ${INTERVAL}000/" | sed "s/history\" : [0-9]*/history\" : $HISTORY/" | bzip2 | $ssh "bunzip2 > $DEST/receiver.json"
+	timeout -s9 8 cat $SRC/receiver.json \
+        | sed -E "s/refresh\" ?: ?[0-9]*/refresh\" : ${INTERVAL}000/" \
+        | sed -E "s/history\" ?: ?[0-9]*/history\" : $HISTORY/" \
+        | sed -E "s/aircraft_binCraft\" ?: ?true/aircraft_binCraft\" : false/" \
+        | bzip2 | $ssh "bunzip2 > $DEST/receiver.json"
 
 	i=0
 	while
